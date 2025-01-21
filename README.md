@@ -2,9 +2,9 @@
 
 一个优雅的 GitHub 贡献数据可视化工具，展示用户的贡献热力图、年度统计和连续贡献等数据。
 
-![预览截图](/1.png)
+![预览截图1](./screenshots/1.png)
 
-![预览截图](/2.png)
+![预览截图2](./screenshots/2.png)
 
 ## ✨ 特性
 
@@ -30,9 +30,14 @@ python -m http.server 8000
 
 # Python 2
 python -m SimpleHTTPServer 8000
+
+# 8000为端口，可以修改
 ```
 
 3. 在浏览器中访问：`http://localhost:8000`
+
+
+_**注：您也可以直接打开** `index.html`_
 
 ## 🛠️ 项目结构
 
@@ -76,6 +81,7 @@ github-contributions/
 - 包含主要的HTML组件
 
 #### styles.css
+- 定义自定义WOFF字体
 - 定义全局主题变量
 - 设置响应式布局
 - 实现组件样式

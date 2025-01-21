@@ -1,3 +1,16 @@
+@font-face {
+    font-family: 'Hubot Sans';
+    src:
+        url('./fonts/Hubot-Sans.woff2') format('woff2 supports variations'),
+        url('./fonts/Hubot-Sans.woff2') format('woff2-variations');
+    font-weight: 200 500;
+    font-stretch: 400% 125%;
+}
+
+html {
+    font-family: 'Hubot Sans';
+}
+
 :root {
     --primary-color: #2ea44f;
     --primary-hover: #2c974b;
@@ -33,6 +46,7 @@ body {
 .header {
     text-align: center;
     margin-bottom: 2rem;
+    font-family: 'Hubot Sans';
 }
 
 .header h1 {
@@ -108,6 +122,7 @@ body {
         transform: scale(0.8);
         opacity: 0;
     }
+
     to {
         transform: scale(1);
         opacity: 1;
@@ -211,6 +226,7 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1.5rem;
     margin-bottom: 2rem;
+    font-family: 'Hubot Sans';
 }
 
 .stats-card {
@@ -352,6 +368,7 @@ body {
         transform: scale(0);
         opacity: 0;
     }
+
     to {
         transform: scale(1);
         opacity: 1;
@@ -359,15 +376,34 @@ body {
 }
 
 /* 贡献等级颜色 */
-.level-0 { background-color: #ebedf0; }
-.level-1 { background-color: #9be9a8; }
-.level-2 { background-color: #40c463; }
-.level-3 { background-color: #30a14e; }
-.level-4 { background-color: #216e39; }
+.level-0 {
+    background-color: #ebedf0;
+}
+
+.level-1 {
+    background-color: #9be9a8;
+}
+
+.level-2 {
+    background-color: #40c463;
+}
+
+.level-3 {
+    background-color: #30a14e;
+}
+
+.level-4 {
+    background-color: #216e39;
+}
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 /* 动画关键帧 */
@@ -376,6 +412,7 @@ body {
         opacity: 0;
         transform: translateY(-20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -387,6 +424,7 @@ body {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -404,15 +442,15 @@ body {
     .container {
         padding: 1rem;
     }
-    
+
     .header h1 {
         font-size: 2rem;
     }
-    
+
     .input-section {
         flex-direction: column;
     }
-    
+
     #username {
         width: 100%;
     }
@@ -430,15 +468,15 @@ body {
     .contribution-calendar {
         padding: 3rem 1rem 1.5rem;
     }
-    
+
     .week-labels {
         left: 0.5rem;
     }
-    
+
     .contribution-grid {
         margin-left: 2rem;
     }
-    
+
     .month-labels {
         left: 2rem;
     }
@@ -501,7 +539,8 @@ body {
     display: flex;
     align-items: center;
     animation: rotate-in 0.6s ease;
-    margin-top: 2px; /* 微调图标位置 */
+    margin-top: 2px;
+    /* 微调图标位置 */
 }
 
 /* 新增动画关键帧 */
@@ -510,6 +549,7 @@ body {
         transform: rotate(-180deg);
         opacity: 0;
     }
+
     to {
         transform: rotate(0);
         opacity: 1;
@@ -521,6 +561,7 @@ body {
         transform: translateX(20px);
         opacity: 0;
     }
+
     to {
         transform: translateX(0);
         opacity: 1;
@@ -531,9 +572,11 @@ body {
     0% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.05);
     }
+
     100% {
         transform: scale(1);
     }
@@ -548,6 +591,7 @@ body {
         opacity: 1;
         transform: translateY(0);
     }
+
     to {
         opacity: 0;
         transform: translateY(-10px);
@@ -587,6 +631,7 @@ body {
         transform: translateY(-10px);
         opacity: 0;
     }
+
     to {
         transform: translateY(0);
         opacity: 1;
@@ -605,6 +650,11 @@ body {
     text-align: center;
 }
 
+.author {
+    display: flex;
+    align-items: center;
+}
+
 .author-link {
     display: flex;
     align-items: center;
@@ -613,6 +663,7 @@ body {
     color: var(--text-primary);
     font-weight: 500;
     transition: opacity 0.2s ease;
+    margin-right: 10px;
 }
 
 .author-link:hover {
@@ -703,6 +754,7 @@ body {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    font-family: 'Hubot Sans';
 }
 
 .nav-links {
@@ -744,4 +796,4 @@ body {
 
 .nav-link.active {
     color: var(--primary-color);
-} 
+}

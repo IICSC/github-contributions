@@ -5,17 +5,17 @@ const createHeatmap = (data) => {
     // 创建标题和图标
     const titleContainer = document.createElement('div');
     titleContainer.className = 'heatmap-header';
-    
+
     const icon = document.createElement('span');
     icon.className = 'contribution-icon';
     icon.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
         <path fill-rule="evenodd" d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 01-1.484.211c-.04-.282-.163-.547-.37-.847a8.695 8.695 0 00-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.75.75 0 01-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75zM6 15.25a.75.75 0 01.75-.75h2.5a.75.75 0 010 1.5h-2.5a.75.75 0 01-.75-.75zM5.75 12a.75.75 0 000 1.5h4.5a.75.75 0 000-1.5h-4.5z"/>
     </svg>`;
-    
+
     const title = document.createElement('h3');
     title.textContent = '贡献日历';
     title.className = 'heatmap-title';
-    
+
     titleContainer.appendChild(icon);
     titleContainer.appendChild(title);
     heatmapContainer.appendChild(titleContainer);
@@ -33,7 +33,7 @@ const createHeatmap = (data) => {
     // 创建年份选择器
     const yearSelector = document.createElement('div');
     yearSelector.className = 'year-selector';
-    
+
     const years = Object.keys(yearlyData).sort().reverse();
     const latestYear = years[0];
 
@@ -42,11 +42,11 @@ const createHeatmap = (data) => {
         yearBtn.textContent = year;
         yearBtn.className = 'year-btn';
         yearBtn.style.animationDelay = `${index * 0.1}s`;
-        
+
         if (year === latestYear) {
             yearBtn.classList.add('active');
         }
-        
+
         yearBtn.onclick = () => {
             document.querySelectorAll('.year-btn').forEach(btn => {
                 btn.classList.remove('active');
@@ -73,10 +73,10 @@ const createHeatmap = (data) => {
 const showYearContributions = (year, contributions) => {
     const calendarContainer = document.querySelector('.contribution-calendar');
     calendarContainer.classList.add('fade-out');
-    
+
     setTimeout(() => {
         calendarContainer.innerHTML = '';
-        
+
         // 创建月份标签
         const monthLabels = document.createElement('div');
         monthLabels.className = 'month-labels';
@@ -117,7 +117,7 @@ const showYearContributions = (year, contributions) => {
         // 计算该年第一天是星期几
         const firstDay = new Date(year, 0, 1);
         const startOffset = firstDay.getDay();
-        
+
         // 计算上一年的最后几天
         const lastYearDays = [];
         for (let i = startOffset - 1; i >= 0; i--) {
@@ -139,7 +139,7 @@ const showYearContributions = (year, contributions) => {
 
         // 创建7x53的网格
         const grid = Array(7).fill().map(() => Array(53).fill(null));
-        
+
         // 填充日期到网格
         allDates.forEach((date, index) => {
             const col = Math.floor(index / 7);
@@ -154,10 +154,10 @@ const showYearContributions = (year, contributions) => {
 
                 const cell = document.createElement('div');
                 cell.className = 'contribution-cell';
-                
+
                 const dateStr = date.toISOString().split('T')[0];
                 const count = contributionMap.get(dateStr) || 0;
-                
+
                 // 设置贡献等级
                 if (count === 0) cell.classList.add('level-0');
                 else if (count <= 3) cell.classList.add('level-1');
@@ -168,7 +168,7 @@ const showYearContributions = (year, contributions) => {
                 // 添加提示信息
                 const formattedDate = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
                 cell.title = `${formattedDate}: ${count} 次贡献`;
-                
+
                 // 如果日期不在当前年份内，添加淡化效果
                 if (date.getFullYear() !== parseInt(year)) {
                     cell.classList.add('outside-month');
@@ -183,10 +183,10 @@ const showYearContributions = (year, contributions) => {
         });
 
         calendarContainer.appendChild(gridContainer);
-        
+
         calendarContainer.classList.remove('fade-out');
         calendarContainer.classList.add('fade-in');
-        
+
         setTimeout(() => {
             calendarContainer.classList.remove('fade-in');
         }, 300);

@@ -9,12 +9,12 @@ const createYearlyChart = (data) => {
     let currentStreak = 0;
     let longestStreak = 0;
     let tempStreak = 0;
-    
+
     // 按日期排序，确保是按时间顺序计算
-    const sortedContributions = [...data.contributions].sort((a, b) => 
+    const sortedContributions = [...data.contributions].sort((a, b) =>
         new Date(b.date) - new Date(a.date)
     );
-    
+
     sortedContributions.forEach(day => {
         if (day.count > 0) {
             tempStreak++;
@@ -43,7 +43,7 @@ const createYearlyChart = (data) => {
     const contributions = years.map(year => yearlyData[year]);
 
     const ctx = document.getElementById('yearlyChart').getContext('2d');
-    
+
     if (yearlyChart) {
         yearlyChart.destroy();
     }
@@ -100,7 +100,7 @@ const animateNumber = (elementId, target) => {
 
     const animate = () => {
         current += increment;
-        if ((increment > 0 && current >= target) || 
+        if ((increment > 0 && current >= target) ||
             (increment < 0 && current <= target)) {
             element.textContent = target;
             return;
@@ -130,7 +130,7 @@ const refreshData = () => {
     const refreshBtn = document.getElementById('refreshBtn');
     const spinner = refreshBtn.querySelector('.loading-spinner');
     const buttonText = refreshBtn.querySelector('.button-text');
-    
+
     refreshBtn.disabled = true;
     spinner.style.display = 'block';
     buttonText.textContent = '加载中...';
@@ -165,15 +165,15 @@ const showError = (message) => {
         </svg>
         <span>${message}</span>
     `;
-    
+
     const existingError = document.querySelector('.error-message');
     if (existingError) {
         existingError.remove();
     }
-    
+
     const inputSection = document.querySelector('.input-section');
     inputSection.appendChild(errorDiv);
-    
+
     setTimeout(() => {
         errorDiv.classList.add('fade-out');
         setTimeout(() => errorDiv.remove(), 300);
@@ -204,12 +204,12 @@ const navbar = document.querySelector('.navbar');
 
 window.addEventListener('scroll', () => {
     const currentScrollY = window.scrollY;
-    
+
     if (currentScrollY > lastScrollY) {
         navbar.classList.add('hidden');
     } else {
         navbar.classList.remove('hidden');
     }
-    
+
     lastScrollY = currentScrollY;
 }); 

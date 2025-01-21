@@ -1,16 +1,16 @@
 const processMonthlyData = (contributions) => {
     const monthlyData = {};
-    
+
     contributions.forEach(day => {
         const date = new Date(day.date);
-        const monthKey = `${date.getFullYear()}-${date.getMonth()+1}`;
-        
+        const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
+
         if (!monthlyData[monthKey]) {
             monthlyData[monthKey] = 0;
         }
         monthlyData[monthKey] += day.count;
     });
-    
+
     return monthlyData;
 };
 
