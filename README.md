@@ -121,3 +121,12 @@ github-contributions/
    - 创建新的 JS 文件
    - 在 `index.html` 中引入
    - 添加相应的样式和交互 
+
+## ⚖️ 许可证
+
+本项目使用 [MIT 许可证](https://github.com/IICSC/github-contributions/blob/main/LICENSE) 开源
+
+### 使用到的开源项目及资源
+
+- [Chart.js](https://github.com/chartjs/Chart.js)（MIT 许可证）
+- [Hubot Sans](https://github.com/github/hubot-sans)（OFL-1.1 许可证）
