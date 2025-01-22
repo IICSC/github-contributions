@@ -89,8 +89,8 @@ body {
 }
 
 .user-avatar {
-    width: 32px;
-    height: 32px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     border: 2px solid var(--primary-color);
     transition: all 0.3s ease;
@@ -796,4 +796,52 @@ body {
 
 .nav-link.active {
     color: var(--primary-color);
+}
+
+/* 添加GitHub图标容器样式 */
+.github-icon-wrapper {
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+    margin-right: 8px;
+    order: -1;
+}
+
+/* 访问量统计容器样式 */
+.visit-counter {
+    margin-top: 0;
+    margin-bottom: 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 3rem;
+    padding: 1.5rem;
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.counter-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.counter-image {
+    height: 24px;
+    border-radius: 4px;
+}
+
+.user-counter {
+    margin-top: 0;
+}
+
+/* 添加计数器项容器样式 */
+.visit-counter > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 200px;
 }
