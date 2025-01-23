@@ -6,6 +6,8 @@
 
 ![预览截图2](./screenshots/2.png)
 
+**🌐 体验最新Commit：https://iicsc.damon233.top/github-contributions**
+
 ## ✨ 特性
 
 - 📊 贡献热力图展示
@@ -30,12 +32,11 @@ python -m http.server 8000
 
 # Python 2
 python -m SimpleHTTPServer 8000
-
-# 8000为端口，可以修改
 ```
 
-3. 在浏览器中访问：`http://localhost:8000`
+_**注：**`8000` **为端口，可以修改**_
 
+3. 在浏览器中访问：`http://localhost:8000`
 
 _**注：您也可以直接打开** `index.html`_
 
@@ -43,63 +44,69 @@ _**注：您也可以直接打开** `index.html`_
 
 ```
 github-contributions/
-├── index.html              # 主页面HTML结构
-│   ├── 导航栏
-│   ├── 用户输入区
-│   ├── 统计卡片
-│   ├── 图表区域
-│   └── 页脚
-│
-├── styles.css              # 样式文件
-│   ├── 主题变量
-│   ├── 布局样式
-│   ├── 组件样式
-│   └── 动画效果
-│
-├── yearly_contributions.js # 年度统计相关
-│   ├── 数据处理
-│   ├── 图表生成
-│   ├── 动画效果
-│   └── 事件处理
-│
-├── heatmap.js             # 贡献热力图相关
-│   ├── 热力图生成
-│   ├── 日期处理
-│   ├── 动画效果
-│   └── 交互处理
-│
-└── monthly_activity.js    # 月度活动统计
-    ├── 数据处理
-    └── 图表生成
+ ├── fonts/
+ │    └── Hubot-Sans.woff2       # 自定义字体
+ │
+ ├── images/
+ │    └── placeholder-avatar.svg # 头像占位
+ │
+ ├── index.html                  # 主页面HTML结构
+ │    ├── 导航栏
+ │    ├── 用户输入区
+ │    ├── 统计卡片
+ │    ├── 图表区域
+ │    └── 页脚
+ │
+ ├── styles.css                  # 样式文件
+ │    ├── 主题变量
+ │    ├── 布局样式
+ │    ├── 组件样式
+ │    └── 动画效果
+ │
+ ├── yearly_contributions.js     # 年度统计相关
+ │    ├── 数据处理
+ │    ├── 图表生成
+ │    ├── 动画效果
+ │    └── 事件处理
+ │
+ ├── heatmap.js                  # 贡献热力图相关
+ │    ├── 热力图生成
+ │    ├── 日期处理
+ │    ├── 动画效果
+ │    └── 交互处理
+ │
+ └── monthly_activity.js         # 月度活动统计
+      ├── 数据处理
+      └── 图表生成
 ```
 
 ### 核心文件说明
 
-#### index.html
+#### 📄 index.html
 - 定义页面结构和布局
 - 引入所需的样式和脚本
 - 包含主要的HTML组件
 
-#### styles.css
+#### 📄 styles.css
 - 定义自定义WOFF字体
 - 定义全局主题变量
 - 设置响应式布局
 - 实现组件样式
 - 定义动画效果
 
-#### yearly_contributions.js
+#### 📄 yearly_contributions.js
 - 处理年度贡献数据
 - 生成年度统计图表
 - 计算连续贡献天数
 - 处理数据刷新逻辑
 
-#### heatmap.js
+#### 📄 heatmap.js
 - 生成贡献热力图
 - 处理日期和贡献数据
 - 实现交互效果
 - 管理动画效果
 
-#### monthly_activity.js
+#### 📄 monthly_activity.js
 - 处理月度活动数据
 - 生成月度统计图表
 
