@@ -845,3 +845,55 @@ body {
     align-items: center;
     min-width: 200px;
 }
+
+/* 热力图贡献等级 */
+.contribution-cell.level-0 {
+    background-color: #ebedf0;
+}
+
+.contribution-cell.level-1 {
+    background-color: #9be9a8;
+}
+
+.contribution-cell.level-2 {
+    background-color: #40c463;
+}
+
+.contribution-cell.level-3 {
+    background-color: #30a14e;
+}
+
+.contribution-cell.level-4 {
+    background-color: #216e39;
+}
+
+/* 未来日期样式 */
+.contribution-cell.future-date {
+    background-color: #f0f0f0;
+    border: 1px dashed #ccc;
+    opacity: 0.7;
+}
+
+.dark-mode .contribution-cell.future-date {
+    background-color: #2d333b;
+    border: 1px dashed #444c56;
+}
+
+/* 无数据时的提示样式 */
+.empty-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+    border: 1px dashed var(--border-color);
+    margin: 1rem 0;
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease forwards;
+}

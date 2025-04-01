@@ -1,5 +1,14 @@
 const createHeatmap = (data) => {
     const heatmapContainer = document.getElementById('heatmap');
+    if (!heatmapContainer) {
+        console.error('找不到热力图容器');
+        return;
+    }
+    
+    // 清空容器但保留已有内容的引用
+    const oldHeader = heatmapContainer.querySelector('.heatmap-header');
+    const oldYearSelector = heatmapContainer.querySelector('.year-selector');
+    
     heatmapContainer.innerHTML = '';
 
     // 创建标题和图标
@@ -19,22 +28,66 @@ const createHeatmap = (data) => {
     titleContainer.appendChild(icon);
     titleContainer.appendChild(title);
     heatmapContainer.appendChild(titleContainer);
+    
+    // 检查数据是否有效
+    if (!data || !data.contributions || data.contributions.length === 0) {
+        console.error('热力图数据无效或为空');
+        
+        // 创建空的贡献日历
+        const emptyCalendar = document.createElement('div');
+        emptyCalendar.className = 'contribution-calendar';
+        emptyCalendar.innerHTML = '<div class="empty-message">暂无贡献数据</div>';
+        heatmapContainer.appendChild(emptyCalendar);
+        
+        return;
+    }
+    
+    console.log('开始创建热力图，数据点数量:', data.contributions.length);
 
     // 按年份分组数据
     const yearlyData = {};
     data.contributions.forEach(day => {
-        const year = new Date(day.date).getFullYear();
-        if (!yearlyData[year]) {
-            yearlyData[year] = [];
+        try {
+            const date = new Date(day.date);
+            if (isNaN(date.getTime())) {
+                console.warn('忽略无效日期:', day.date);
+                return;
+            }
+            
+            const year = date.getFullYear();
+            if (!yearlyData[year]) {
+                yearlyData[year] = [];
+            }
+            yearlyData[year].push(day);
+        } catch (e) {
+            console.error('处理贡献数据时出错:', e);
         }
-        yearlyData[year].push(day);
     });
+    
+    // 检查是否有有效的年份数据
+    if (Object.keys(yearlyData).length === 0) {
+        console.error('没有有效的年份数据');
+        
+        const emptyCalendar = document.createElement('div');
+        emptyCalendar.className = 'contribution-calendar';
+        emptyCalendar.innerHTML = '<div class="empty-message">无法解析贡献数据</div>';
+        heatmapContainer.appendChild(emptyCalendar);
+        
+        return;
+    }
 
     // 创建年份选择器
     const yearSelector = document.createElement('div');
     yearSelector.className = 'year-selector';
 
     const years = Object.keys(yearlyData).sort().reverse();
+    console.log('可用年份:', years);
+    
+    if (years.length === 0) {
+        console.error('未找到任何年份数据');
+        return;
+    }
+    
     const latestYear = years[0];
 
     years.forEach((year, index) => {
@@ -67,7 +120,14 @@ const createHeatmap = (data) => {
     addLegend(heatmapContainer);
 
     // 立即显示最新年份的数据
-    showYearContributions(latestYear, yearlyData[latestYear]);
+    try {
+        showYearContributions(latestYear, yearlyData[latestYear]);
+    } catch (e) {
+        console.error('显示年度贡献时出错:', e);
+        calendarContainer.innerHTML = '<div class="empty-message">显示贡献数据时出错</div>';
+    }
+    
+    console.log('热力图创建完成');
 };
 
 const showYearContributions = (year, contributions) => {
@@ -104,42 +164,81 @@ const showYearContributions = (year, contributions) => {
         const gridContainer = document.createElement('div');
         gridContainer.className = 'contribution-grid';
 
-        // 处理数据
-        const contributionMap = new Map(
-            contributions.map(day => {
-                // 转换为本地时间
-                const date = new Date(day.date);
-                const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-                return [localDate.toISOString().split('T')[0], day.count];
-            })
-        );
+        // 调试日期格式问题
+        console.log('贡献数据第一项:', contributions[0]);
+        console.log('处理的年份:', year);
 
-        // 计算该年第一天是星期几
-        const firstDay = new Date(year, 0, 1);
-        const startOffset = firstDay.getDay();
+        // 处理数据 - 修复日期格式问题
+        const contributionMap = new Map();
+        
+        // 检查是否有未来日期
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const currentMonth = now.getMonth() + 1;
+        const currentDay = now.getDate();
+        const currentDateStr = `${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(currentDay).padStart(2, '0')}`;
+        
+        console.log('当前日期:', currentDateStr);
+        
+        // 按日期排序贡献数据
+        const sortedContributions = [...contributions].sort((a, b) => a.date.localeCompare(b.date));
+        
+        sortedContributions.forEach(day => {
+            try {
+                // 直接使用原始日期字符串，不进行时区转换
+                contributionMap.set(day.date, day.count);
+            } catch (e) {
+                console.error('处理日期时出错:', day.date, e);
+            }
+        });
 
-        // 计算上一年的最后几天
-        const lastYearDays = [];
-        for (let i = startOffset - 1; i >= 0; i--) {
-            const date = new Date(year, 0, -i);
-            // 转换为本地时间
-            const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-            lastYearDays.push(localDate);
+        // 生成当年所有日期并构建日历
+        const yearNum = parseInt(year);
+        const isLeapYearVal = isLeapYear(yearNum);
+        const daysInYear = isLeapYearVal ? 366 : 365;
+        
+        console.log(`${year}年天数:`, daysInYear, isLeapYearVal ? '(闰年)' : '');
+
+        // 获取该年第一天的星期
+        const firstDayOfYear = new Date(yearNum, 0, 1);
+        const firstDayWeekday = firstDayOfYear.getDay(); // 0 是星期日，1是星期一...
+        
+        console.log(`${year}年第一天是星期:`, firstDayWeekday);
+
+        // 生成该年所有日期
+        const allDates = [];
+        
+        // 添加上一年的日期以填充第一周
+        for (let i = 0; i < firstDayWeekday; i++) {
+            const prevYearDate = new Date(yearNum - 1, 11, 31 - firstDayWeekday + i + 1);
+            allDates.push(prevYearDate);
         }
+        
+        // 添加当年所有日期
+        for (let i = 1; i <= daysInYear; i++) {
+            const currentDate = new Date(yearNum, 0, i);
+            allDates.push(currentDate);
+        }
+        
+        // 如果需要，添加下一年的日期以填充最后一周
+        const lastDayOfYear = new Date(yearNum, 11, 31);
+        const lastDayWeekday = lastDayOfYear.getDay();
+        if (lastDayWeekday < 6) {
+            for (let i = 1; i <= 6 - lastDayWeekday; i++) {
+                const nextYearDate = new Date(yearNum + 1, 0, i);
+                allDates.push(nextYearDate);
+            }
+        }
+        
+        console.log('日历总日期数:', allDates.length);
 
-        // 生成所有日期
-        const allDates = [
-            ...lastYearDays,
-            ...Array.from({ length: 365 }, (_, i) => {
-                const date = new Date(year, 0, i + 1);
-                // 转换为本地时间
-                return new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-            })
-        ];
-
-        // 创建7x53的网格
-        const grid = Array(7).fill().map(() => Array(53).fill(null));
-
+        // 创建日历网格
+        const weeksCount = Math.ceil(allDates.length / 7);
+        console.log('日历总周数:', weeksCount);
+        
+        // 以7x53的网格显示
+        const grid = Array(7).fill().map(() => Array(weeksCount).fill(null));
+        
         // 填充日期到网格
         allDates.forEach((date, index) => {
             const col = Math.floor(index / 7);
@@ -147,7 +246,7 @@ const showYearContributions = (year, contributions) => {
             grid[row][col] = date;
         });
 
-        // 根据网格创建格子
+        // 创建日历单元格
         grid.forEach((row, rowIndex) => {
             row.forEach((date, colIndex) => {
                 if (!date) return;
@@ -155,27 +254,47 @@ const showYearContributions = (year, contributions) => {
                 const cell = document.createElement('div');
                 cell.className = 'contribution-cell';
 
-                const dateStr = date.toISOString().split('T')[0];
-                const count = contributionMap.get(dateStr) || 0;
+                // 格式化日期为YYYY-MM-DD，与API返回格式一致
+                const formattedYear = date.getFullYear();
+                const formattedMonth = String(date.getMonth() + 1).padStart(2, '0');
+                const formattedDay = String(date.getDate()).padStart(2, '0');
+                const formattedDate = `${formattedYear}-${formattedMonth}-${formattedDay}`;
+                
+                // 检查是否为未来日期
+                const isFutureDate = formattedDate > currentDateStr;
+                
+                // 获取贡献数
+                const count = isFutureDate ? 0 : (contributionMap.get(formattedDate) || 0);
 
+                // 为调试添加日期属性
+                cell.setAttribute('data-date', formattedDate);
+                if (isFutureDate) {
+                    cell.setAttribute('data-future', 'true');
+                }
+                
                 // 设置贡献等级
-                if (count === 0) cell.classList.add('level-0');
-                else if (count <= 3) cell.classList.add('level-1');
-                else if (count <= 6) cell.classList.add('level-2');
-                else if (count <= 9) cell.classList.add('level-3');
-                else cell.classList.add('level-4');
+                if (isFutureDate) {
+                    cell.classList.add('future-date');
+                    cell.classList.add('level-0');
+                } else {
+                    if (count === 0) cell.classList.add('level-0');
+                    else if (count <= 3) cell.classList.add('level-1');
+                    else if (count <= 6) cell.classList.add('level-2');
+                    else if (count <= 9) cell.classList.add('level-3');
+                    else cell.classList.add('level-4');
+                }
 
                 // 添加提示信息
-                const formattedDate = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
-                cell.title = `${formattedDate}: ${count} 次贡献`;
+                const displayDate = `${formattedYear}年${date.getMonth() + 1}月${date.getDate()}日`;
+                cell.title = isFutureDate ? `${displayDate}: 未来日期` : `${displayDate}: ${count} 次贡献`;
 
                 // 如果日期不在当前年份内，添加淡化效果
-                if (date.getFullYear() !== parseInt(year)) {
+                if (formattedYear !== yearNum) {
                     cell.classList.add('outside-month');
                 }
 
                 // 添加动画延迟
-                const delay = Math.min((rowIndex * 53 + colIndex) * 0.001, 0.3);
+                const delay = Math.min((rowIndex * weeksCount + colIndex) * 0.001, 0.3);
                 cell.style.animationDelay = `${delay}s`;
 
                 gridContainer.appendChild(cell);
@@ -192,6 +311,11 @@ const showYearContributions = (year, contributions) => {
         }, 300);
     }, 300);
 };
+
+// 辅助函数：判断是否为闰年
+function isLeapYear(year) {
+    return ((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0);
+}
 
 const addLegend = (container) => {
     const legend = document.createElement('div');
