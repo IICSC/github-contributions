@@ -44,13 +44,27 @@ const createHeatmap = (data) => {
     
     console.log('开始创建热力图，数据点数量:', data.contributions.length);
 
-    // 按年份分组数据
-    const yearlyData = {};
+    // 预处理所有数据，创建全局的日期贡献映射
+    const allContributionsMap = new Map();
     data.contributions.forEach(day => {
         try {
             const date = new Date(day.date);
             if (isNaN(date.getTime())) {
                 console.warn('忽略无效日期:', day.date);
+                return;
+            }
+            allContributionsMap.set(day.date, day.count);
+        } catch (e) {
+            console.error('处理贡献数据时出错:', e);
+        }
+    });
+    
+    // 按年份分组数据 - 主要用于年份选择器
+    const yearlyData = {};
+    data.contributions.forEach(day => {
+        try {
+            const date = new Date(day.date);
+            if (isNaN(date.getTime())) {
                 return;
             }
             
@@ -105,7 +119,7 @@ const createHeatmap = (data) => {
                 btn.classList.remove('active');
             });
             yearBtn.classList.add('active');
-            showYearContributions(year, yearlyData[year]);
+            showYearContributions(year, yearlyData[year], allContributionsMap);
         };
         yearSelector.appendChild(yearBtn);
     });
@@ -121,7 +135,7 @@ const createHeatmap = (data) => {
 
     // 立即显示最新年份的数据
     try {
-        showYearContributions(latestYear, yearlyData[latestYear]);
+        showYearContributions(latestYear, yearlyData[latestYear], allContributionsMap);
     } catch (e) {
         console.error('显示年度贡献时出错:', e);
         calendarContainer.innerHTML = '<div class="empty-message">显示贡献数据时出错</div>';
@@ -130,7 +144,7 @@ const createHeatmap = (data) => {
     console.log('热力图创建完成');
 };
 
-const showYearContributions = (year, contributions) => {
+const showYearContributions = (year, contributions, allContributionsMap) => {
     const calendarContainer = document.querySelector('.contribution-calendar');
     calendarContainer.classList.add('fade-out');
 
@@ -168,9 +182,6 @@ const showYearContributions = (year, contributions) => {
         console.log('贡献数据第一项:', contributions[0]);
         console.log('处理的年份:', year);
 
-        // 处理数据 - 修复日期格式问题
-        const contributionMap = new Map();
-        
         // 检查是否有未来日期
         const now = new Date();
         const currentYear = now.getFullYear();
@@ -179,18 +190,6 @@ const showYearContributions = (year, contributions) => {
         const currentDateStr = `${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(currentDay).padStart(2, '0')}`;
         
         console.log('当前日期:', currentDateStr);
-        
-        // 按日期排序贡献数据
-        const sortedContributions = [...contributions].sort((a, b) => a.date.localeCompare(b.date));
-        
-        sortedContributions.forEach(day => {
-            try {
-                // 直接使用原始日期字符串，不进行时区转换
-                contributionMap.set(day.date, day.count);
-            } catch (e) {
-                console.error('处理日期时出错:', day.date, e);
-            }
-        });
 
         // 生成当年所有日期并构建日历
         const yearNum = parseInt(year);
@@ -210,13 +209,17 @@ const showYearContributions = (year, contributions) => {
         
         // 添加上一年的日期以填充第一周
         for (let i = 0; i < firstDayWeekday; i++) {
-            const prevYearDate = new Date(yearNum - 1, 11, 31 - firstDayWeekday + i + 1);
+            // 修正计算逻辑，确保日期正确
+            const daysToSubtract = firstDayWeekday - i;
+            const prevYearDate = new Date(yearNum, 0, 1);
+            prevYearDate.setDate(prevYearDate.getDate() - daysToSubtract);
             allDates.push(prevYearDate);
         }
         
         // 添加当年所有日期
-        for (let i = 1; i <= daysInYear; i++) {
-            const currentDate = new Date(yearNum, 0, i);
+        for (let i = 0; i < daysInYear; i++) {
+            const currentDate = new Date(yearNum, 0, 1);
+            currentDate.setDate(currentDate.getDate() + i);
             allDates.push(currentDate);
         }
         
@@ -225,7 +228,8 @@ const showYearContributions = (year, contributions) => {
         const lastDayWeekday = lastDayOfYear.getDay();
         if (lastDayWeekday < 6) {
             for (let i = 1; i <= 6 - lastDayWeekday; i++) {
-                const nextYearDate = new Date(yearNum + 1, 0, i);
+                const nextYearDate = new Date(yearNum, 11, 31);
+                nextYearDate.setDate(nextYearDate.getDate() + i);
                 allDates.push(nextYearDate);
             }
         }
@@ -263,8 +267,8 @@ const showYearContributions = (year, contributions) => {
                 // 检查是否为未来日期
                 const isFutureDate = formattedDate > currentDateStr;
                 
-                // 获取贡献数
-                const count = isFutureDate ? 0 : (contributionMap.get(formattedDate) || 0);
+                // 获取贡献数 - 使用全局贡献映射，无论日期属于哪一年
+                const count = isFutureDate ? 0 : (allContributionsMap.get(formattedDate) || 0);
 
                 // 为调试添加日期属性
                 cell.setAttribute('data-date', formattedDate);

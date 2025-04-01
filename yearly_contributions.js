@@ -172,15 +172,19 @@ const calculateStreaks = (contributions) => {
         let keepCounting = true;
         
         while (keepCounting) {
-            // 格式化日期为YYYY-MM-DD
-            const dateStr = streakEndDate.toISOString().split('T')[0];
+            // 格式化日期为YYYY-MM-DD (使用UTC避免时区问题)
+            const year = streakEndDate.getFullYear();
+            const month = String(streakEndDate.getMonth() + 1).padStart(2, '0');
+            const day = String(streakEndDate.getDate()).padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}`;
+            
             const count = contributionMap.get(dateStr) || 0;
             
             if (count > 0) {
                 currentStreak++;
                 console.log(`${dateStr} 有贡献，当前连续: ${currentStreak}`);
                 
-                // 前一天
+                // 前一天 (使用setDate以正确处理月份和年份边界)
                 streakEndDate.setDate(streakEndDate.getDate() - 1);
             } else {
                 console.log(`${dateStr} 无贡献，当前连续中断`);
